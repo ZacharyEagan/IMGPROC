@@ -1,0 +1,25 @@
+Currently active project, unfinished.
+
+Syncronises opencv video capture with external hardware
+Allows capture of distinct lighting environments.
+Current bugs:
+    -opencv image buffer has size 8 must be emptied and kept up with
+        current solution is hack only and slows capture by x8
+
+Hardware requirements: 
+   --opencv compatible external webcam (I used a rented Logitec c920)
+   --Serial controlled lighting array 
+        (mine is currently based on arduino mega1280)
+        Baud rate = 115200
+        Parity = even
+        stop bits = 2
+
+        commands:
+            'I' => set LED's to initial value
+            'N' => move to next LED
+
+        responses:
+            "X\n" => X is integer value 0-9 indicating witch LED is on
+
+            
+            

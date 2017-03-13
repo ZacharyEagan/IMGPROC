@@ -1,0 +1,21 @@
+edu: Directory for notable educational projects which went unexpectedly well
+     Primarily includes tests of opencv functionality and obvious usages
+
+     Note: software in this directory is not intended to be proffesional grade
+            it is intended to be rapid fire testing for learning purposes only
+
+
+Project currently in this directory:
+    HalfLifeFilter: adds motion blur to video stream
+    Trex: compares two images in stream to remove static objects. How Trex See
+    RED: Seperates the three colors of the video stream
+    MAX: seperates the three colors and build new picture of dominant colors 
+    DILL: dilates image
+    PG: I dont even remember anymore but it looks cool
+    LD: another one I dont remember on of these two is looking for triangles
+
+(for my use only this probably means nothing to anyone else)
+Current status:
+    Updated through TEST7
+    Noise omitted (no compile)
+
