@@ -26,7 +26,7 @@ int INIT_CAM_libv4l2(char *port) {
     c.id = V4L2_CID_EXPOSURE_ABSOLUTE;
     v4l2_ioctl(fp, VIDIOC_G_CTRL, &c);
     printf("V4L2: CID_EXPOSURE_ABSOLUTE = %d\n",c.value);
-    c.value = 50;
+    c.value = 2046;
     printf("V4L2: CID_EXPOSURE_ABSOLUTE SET = 50\n");
 
     if ((v4l2_ioctl(fp, VIDIOC_S_CTRL, &c) != 0)) {

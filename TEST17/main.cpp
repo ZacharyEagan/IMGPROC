@@ -9,7 +9,7 @@
 #include "Settings.h"
 #include "Serial.h"
 #include "Constants.h"
-
+#include "Proc.hpp"
 
 #define LED_ENV 8
 #define CAM_BUFF_SIZE 5
@@ -31,7 +31,7 @@ int EnvSync = 0;
 
 /* Global Control var */
 int Shutdown = 0;
-
+Mat Imgs[LED_ENV];
 
 int INIT_CAM (VideoCapture *cap) {
     CamSet cs;
@@ -41,7 +41,7 @@ int INIT_CAM (VideoCapture *cap) {
 
     /* Open opencv Capture */
     if (!cap->open(1)) {
-        printf("Cannot Access Cammera\n");
+        //printf("Cannot Access Cammera\n");
         return -1;
     }
 
@@ -74,10 +74,10 @@ void *camThread(void *arg) {
             }
 
             if (ImgLock.try_lock()) {
-                printf("Taking photo\n");
+                //printf("Taking photo\n");
                 cap >> Img;
                 PhotoSync = 1;
-                printf("Photo Taken\n");
+                //printf("Photo Taken\n");
                 ImgLock.unlock();
                 pthread_yield();
             } else {
@@ -107,7 +107,8 @@ void *arrayThread(void *arg) {
     printf("arrayThread: Top\n");
 
     /* Initialise LED Array */
-    if (!INIT_ARRAY(&fd_array)) {
+    while (INIT_ARRAY(&fd_array)) 
+     ;
         ArrayInitialised = 1;
         env = 0;
 
@@ -117,7 +118,9 @@ void *arrayThread(void *arg) {
                 break;
             }
 
-            EnvLock.lock();
+            while(!EnvLock.try_lock()) {
+                pthread_yield();
+            }
             while (Env != env) {
                 env = Array_Next(fd_array);
             }
@@ -125,7 +128,7 @@ void *arrayThread(void *arg) {
             EnvLock.unlock();
             pthread_yield();
         }
-    }
+    //}
 
     pthread_exit(NULL);
 }
@@ -141,6 +144,7 @@ int main() {
     int env;
     int array_resp;
     int dupe;
+    int init_cap = 0;
 
     pthread_t tid[2];
 
@@ -176,7 +180,18 @@ int main() {
             pthread_yield();
         }
         while (!ImgLock.try_lock()) ;
-        imshow("Display0", Img);
+        window_name[7] = 48 + Env;
+        Img.copyTo(Imgs[Env]);
+        if (init_cap) {
+            //printf("init_cap = 1; env = %d\n", Env);
+            if(Env != LED_ENV - 1)
+                DIFF_RGB(Imgs[Env], Imgs[LED_ENV - 1]);
+        //    printf("b\n");
+        } else {
+            if (Env == LED_ENV - 1)
+                init_cap = 1;
+        }
+        imshow(window_name, Imgs[Env]);
         
         /* change to next environment */
         Env++;
