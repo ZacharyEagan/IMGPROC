@@ -36,7 +36,7 @@ typedef struct CamSet {
 } CamSet;
 
 
-
+int INIT_CAM (VideoCapture *cap);
 int INIT_CAM_libv4l2(char *port);
 void INIT_CAM_DEFAULTS(CamSet *cs);
 int INIT_CAM_SET(VideoCapture cap, CamSet *cs);

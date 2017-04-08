@@ -1,4 +1,28 @@
 #include "CamSettings.h" 
+#include "Constants.h"
+
+int INIT_CAM (VideoCapture *cap) {
+    CamSet cs;
+
+    /* Access low level variables for camera */
+    INIT_CAM_libv4l2((char *)DefaultCamera);
+
+    /* Open opencv Capture */
+    if (!cap->open(OCV_Camera)) {
+        printf("Cannot Access Cammera\n");
+        return -1;
+    }
+
+    /* Get opencv settings */
+    INIT_CAM_GET(*cap, &cs);
+    /* ajust opencv settings to match template */
+
+
+    /* Set opencv settings */
+    INIT_CAM_SET(*cap, &cs);
+
+    return 0;
+}
 
 
 int INIT_CAM_libv4l2(char *port) {

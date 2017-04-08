@@ -1,7 +1,10 @@
 #ifndef SERIAL_DEF
 #define SERIAL_DEF
+#include <stdlib.h>
 
+using namespace std;
 
+int INIT_ARRAY(int *fd_array);
 int Find_Array_Coms( void );
 int INIT_Array(int fd);
 int Array_Zero(int fd);

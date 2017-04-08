@@ -1,0 +1,77 @@
+MIA STATUS
+Last updated 4/08/2017 3:31pm
+
+
+Camera
+    Image Capture
+        --Complete
+    Buffer Maintenance
+        --Working But Needs a re-Write
+    Image Store
+        --Demo'd not yet integrated
+    Bayer Spectrum
+        --Reserch Ongoing, currently using Logitech C920. Logitech
+            customer service was understandably confused when I called
+            for spectrum data.
+
+LED ARRAY
+    LED Sync
+        --Hardware Side Sync is complete and easily expandable to
+            larger arrays when ready. It's not fancy but it is robust
+    LED Hardware
+        --Currently using dim color LED's need to build V2 with gels
+    Filter Selection
+        --In progress waiting on some data from ROSCO who so far is 
+            being very helpful
+    
+Image Processing
+    Noise Filters
+        --looking into dilation but woried may hurt data
+    Motion Filters
+        --Complete not yet integrated
+    Spectrum Solve
+        --In Progress
+    DataBase for Known Spectra
+        --Not Begun
+
+User Interface
+    Mouse controls
+        --Complete not yet integrated
+    Single Pixel Graph
+        --Complete for RGB next step is multi-spectral
+    Real Time Material Identification Image
+        --Not Begun
+    Database Entry
+        --Not Begun
+
+Organisation
+    Git
+        --Complete
+    FileSystem
+        --In Cleanup
+    Makefile
+        --Complete
+
+
+Math
+    Solution for isolating one spectra
+        --Hand Calculations in progress
+    General Solution for filter Selection
+        --In Progress
+    Data From Rosco
+        --Waiting on contact to check if he is allowed to give access
+    Spectrometer
+        --Physics department has one, meeting on monday 
+
+Hardware
+    LUMEX5050
+        --Waiting on CPE Dept Funds or to not be broke
+    Filters
+        --Aquired
+    PCB
+        --Not yet Designed
+    Embeded image processor
+        --Jetson TK found considering purchaseing
+    Known Sample Array
+        --Considering color chart or Mirror
+        

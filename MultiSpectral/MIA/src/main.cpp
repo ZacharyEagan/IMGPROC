@@ -10,129 +10,13 @@
 #include "ArrayComs.h"
 #include "Constants.h"
 #include "Proc.hpp"
-
+#include "Thread.h"
 
 #define LED_ENV 8
 #define CAM_BUFF_SIZE 5
 
 using namespace std;
 using namespace cv;
-
-/* Global Camera vars */
-int CamInitialised = 0;
-Mat Img;
-mutex ImgLock;
-int PhotoSync = 0;
-
-/* Global Array vars */
-int ArrayInitialised = 0;
-int Env;
-mutex EnvLock;
-int EnvSync = 0;
-
-/* Global Control var */
-int Shutdown = 0;
-
-
-int INIT_CAM (VideoCapture *cap) {
-    CamSet cs;
-
-    /* Access low level variables for camera */
-    INIT_CAM_libv4l2((char *)DefaultCamera);
-
-    /* Open opencv Capture */
-    if (!cap->open(0)) {
-        printf("Cannot Access Cammera\n");
-        return -1;
-    }
-
-    /* Get opencv settings */
-    INIT_CAM_GET(*cap, &cs);
-    /* ajust opencv settings to match template */
-
-
-    /* Set opencv settings */
-    INIT_CAM_SET(*cap, &cs);
-
-    return 0;
-}
-
-void *camThread(void *arg) {
-
-    VideoCapture cap;
-    Mat tosser;
-
-    printf("camThread: Top\n");
-    
-    if (!INIT_CAM(&cap)) {
-        printf("Camera Inittialised\n");
-        CamInitialised = 1;
-
-        while (1) {
-            if (Shutdown) {
-                printf("Camera Powering Down\n");
-                break;
-            }
-
-            if (ImgLock.try_lock()) {
-                printf("Taking photo\n");
-                cap >> Img;
-                PhotoSync = 1;
-                printf("Photo Taken\n");
-                ImgLock.unlock();
-                pthread_yield();
-            } else {
-                cap >> tosser;
-            }
-        }
-   }
-
-   pthread_exit(NULL); 
-}
-
-int INIT_ARRAY(int *fd_array) {
-    if ((*fd_array = Find_Array_Coms()) <= 0)
-        return -1;
-    if (INIT_Port(*fd_array))
-        return -2;
-    if (INIT_Array(*fd_array))
-        return -3;
-    return 0;
-}
-
-
-void *arrayThread(void *arg) {
-    int fd_array;
-    int env;
-
-    printf("arrayThread: Top\n");
-
-    /* Initialise LED Array */
-    if (!INIT_ARRAY(&fd_array)) {
-        ArrayInitialised = 1;
-        env = 0;
-
-        while(1) {
-            if (Shutdown) {
-                printf("Array, Powering Down\n");
-                break;
-            }
-
-            while(!EnvLock.try_lock()) {
-                pthread_yield();
-            }
-            while (Env != env) {
-                env = Array_Next(fd_array);
-            }
-            EnvSync = 1;
-            EnvLock.unlock();
-            pthread_yield();
-        }
-    }
-
-    pthread_exit(NULL);
-}
-
 
 int main() {
 

@@ -29,6 +29,17 @@ int Find_Array_Coms( void ) {
     return fd;
 }
 
+int INIT_ARRAY(int *fd_array) {
+    if ((*fd_array = Find_Array_Coms()) <= 0)
+        return -1;
+    if (INIT_Port(*fd_array))
+        return -2;
+    if (INIT_Array(*fd_array))
+        return -3;
+    return 0;
+}
+
+
 int INIT_Array (int fd) {
     char buff[BUFF_STD];
 
