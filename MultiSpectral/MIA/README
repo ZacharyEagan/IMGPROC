@@ -1,0 +1,45 @@
+Multispectral Identification Array
+
+Zachary Eagan
+Officially Begun:       Monday 1/02/2017
+Expected Completion :   June 2017 
+
+The MultiSpectral Identification Array (MIA) is an attempt to produce
+usefull visible light spectrum data for a full image using a series of
+known illumination sources. 
+
+Hardware:
+MIA attempts to reduce the cost and increase the spectral resolution 
+of full image multispectral capture. By combining a large number of 
+overlaping broad spectrum filters instead of narrow band emission 
+sources, MIA can take advantage of inexpensive white light sources and
+commonly available filters. 
+
+The current hardware is a logitech C920 or similar opencv compatible 
+camera, an array of 7 color LED's an arduino mega1280 to control the
+LED's and a cheap  HP laptop. 
+
+Software:
+MIA is based on opencv's image capture and processing functionality.
+Images are synchronised with the illumination sources via serial coms.
+images are written to file once every full cycle of the lighting array
+Array Camera syncronisation, and image processing are handled by 
+seperate threads.
+Spectrum data is output to screan via gnuplot. Later versions will
+attempt to build an output image displaying only known materials based
+on a database of sampled spectra.
+
+Currently most functionality is implimented in various forms but not
+integrated into the main program. 
+Current work focusses on this integration.
+
+
+bin     --executables go here
+build   --object files
+doc     --documentation
+include --header files
+lib     --additional libraries needed
+spike   --functions under dev which have not been integrated
+test    --program tests go here
+
+
