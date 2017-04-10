@@ -1,0 +1,4 @@
+This is a file for raw data, currently there is only the initial example
+from the physics departments vernier spectrometer. This is for building a parser
+so I can later build a database of spectra. Files in this directory should as a
+rule be read only.
