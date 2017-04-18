@@ -4,7 +4,8 @@
 #include <pthread.h>
 #include <opencv2/opencv.hpp>
 #include <mutex>
-
+#include <time.h>
+#include <unistd.h>
 
 #include "CamSettings.h"
 #include "ArrayComs.h"
@@ -12,7 +13,6 @@
 #include "Proc.hpp"
 #include "Thread.h"
 
-#define LED_ENV 8
 #define CAM_BUFF_SIZE 5
 
 using namespace std;
@@ -21,7 +21,7 @@ using namespace cv;
 int main() {
 
     
-    Mat image[LED_ENV];
+    Mat image[Num_Env];
     
 
     char window_name[] = "Display0";
@@ -31,24 +31,14 @@ int main() {
 
     pthread_t tid[2];
 
-    ImgLock.lock();
-    EnvLock.lock();
 
     /* initialise threads */
-    if (pthread_create(&(tid[0]), NULL, &camThread, NULL)) {
-        printf("Threading error: cam\n");
+    if (pthread_create(&(tid[0]), NULL, &cameraArrayThread, NULL)) {
+        printf("main: Threading error: cameraArray\n");
         return -1;
     }
-    printf("Camera Thread starting INIT\n");
-
-    if (pthread_create(&(tid[0]), NULL, &arrayThread, NULL)) {
-        printf("Threading error: array\n");
-        return -1;
-    }
-    printf("Array Thread starting INIT\n");
+    printf("main: cameraArrayThread split, starting INIT\n");
     
-
-
     while(!(CamInitialised && ArrayInitialised)) {
         if (!CamInitialised)
             printf("main: waiting on camera INIT\n");
@@ -59,39 +49,26 @@ int main() {
     }
 
     printf("Initialisation Complete\n");
-
+        
     /* Initialise windows */
-    for (env = 0; env < LED_ENV; env++) {
+    for (env = 0; env < Num_Env; env++) {
         window_name[7] = 48 + env;
         namedWindow (window_name, 1);
     }
+    sleep(1);
 
     while (1) {
-        /* get image for current environment */
-        PhotoSync = 0;
-        ImgLock.unlock();
-        while (!PhotoSync) {
-            pthread_yield();
-        }
-        while (!ImgLock.try_lock()) ;
+
+      
+        /* Display image in window corresponding to current environment */
+        ImgLock.lock();
         window_name[7] = 48 + Env;
         imshow(window_name, Img);
-        
-        /* change to next environment */
-        Env++;
-        Env %= LED_ENV;
-        EnvSync = 0;
-        EnvLock.unlock();
-        while (!EnvSync) {
-            pthread_yield();
-        }
-        while (!EnvLock.try_lock()) ;
-
+        ImgLock.unlock();
 
         if(waitKey(30) == 27) 
             break;
     }
-
     Shutdown = 1;
     pthread_join(tid[0], NULL);
     pthread_join(tid[1], NULL);

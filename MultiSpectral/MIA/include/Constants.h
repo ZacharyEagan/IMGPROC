@@ -20,8 +20,10 @@ extern int CamInitialised;
 extern Mat Img;
 extern std::mutex ImgLock;
 extern int PhotoSync;
+extern double FrameDelay;
 
 /* Global Array vars */
+extern int Num_Env;
 extern int ArrayInitialised;
 extern int Env;
 extern std::mutex EnvLock;

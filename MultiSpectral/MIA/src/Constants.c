@@ -22,8 +22,10 @@ int CamInitialised = 0;
 cv::Mat Img;
 std::mutex ImgLock;
 int PhotoSync = 0;
+double FrameDelay = 0.01;
 
 /* Global Array vars */
+int Num_Env = 8;
 int ArrayInitialised = 0;
 int Env;
 std::mutex EnvLock;
