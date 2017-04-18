@@ -11,12 +11,14 @@
 
 int Find_Array_Coms( void ) {
     int fd;
-    char *port = (char *)"/dev/ttyUSB0";
+    char port[] = "/dev/ttyUSB0";
     int count = 0;
-
+    printf("Find_Array_Coms: top\n");
     while ((fd = open_Port(port)) <= 0 && count < 10) {
-        printf("Port: %s empty\n", port);
+        printf("Find_Array_Coms: Port: %s empty\n", port);
         port[11] = port[11] + 1;
+        printf("Find_Array_Coms: modified Port N/A\n");
+        printf("Find_Array_Coms: modified Port; %s\n", port);
         count++;
     }
 
@@ -42,16 +44,19 @@ int INIT_ARRAY(int *fd_array) {
 
 int INIT_Array (int fd) {
     char buff[BUFF_STD];
+    int cont = 1;
+    int count = 0;
 
     /* clear buffer (internet says no better way for serial by USB) */
     while ((read_Port(fd, buff, 64)) > 0)
      ;
-
+    
     write_Port (fd, (char *)"I");
     if (waitSelect(fd, 1000000) == 0) {
         printf("INIT_Array: Array took too long\n");
         return -1;
     }
+   
 
     if ((readln_Port(fd, buff, 64)) > 0)
         if ((buff[0] == '0'))
@@ -108,7 +113,7 @@ int Array_Next(int fd) {
 
 int open_Port(char *port) {
     int fd;
-    
+    printf("open_Port: top\n"); 
     fd = open(port, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
     if (!fd) {

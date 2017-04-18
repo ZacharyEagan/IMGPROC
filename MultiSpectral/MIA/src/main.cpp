@@ -35,18 +35,29 @@ int main() {
     EnvLock.lock();
 
     /* initialise threads */
-    if (pthread_create(&(tid[0]), NULL, &arrayThread, NULL)) {
-        printf("Threading error: array\n");
-        return -5;
-    }
-    
     if (pthread_create(&(tid[0]), NULL, &camThread, NULL)) {
         printf("Threading error: cam\n");
-        return -5;
+        return -1;
+    }
+    printf("Camera Thread starting INIT\n");
+
+    if (pthread_create(&(tid[0]), NULL, &arrayThread, NULL)) {
+        printf("Threading error: array\n");
+        return -1;
+    }
+    printf("Array Thread starting INIT\n");
+    
+
+
+    while(!(CamInitialised && ArrayInitialised)) {
+        if (!CamInitialised)
+            printf("main: waiting on camera INIT\n");
+        if (!ArrayInitialised)
+            printf("main: waiting on array INIT\n");
+
+        pthread_yield();
     }
 
-    while(!CamInitialised) ;
-    while(!ArrayInitialised) ;
     printf("Initialisation Complete\n");
 
     /* Initialise windows */

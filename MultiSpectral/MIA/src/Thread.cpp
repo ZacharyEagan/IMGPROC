@@ -15,20 +15,20 @@ void *camThread(void *arg) {
     printf("camThread: Top\n");
 
     if (!INIT_CAM(&cap)) {
-        printf("Camera Inittialised\n");
+        printf("camThread: Camera Inittialised\n");
         CamInitialised = 1;
 
         while (1) {
             if (Shutdown) {
-                printf("Camera Powering Down\n");
+                printf("camThread: Camera Powering Down\n");
                 break;
             }
 
             if (ImgLock.try_lock()) {
-                printf("Taking photo\n");
+                printf("camThread: Taking photo\n");
                 cap >> Img;
                 PhotoSync = 1;
-                printf("Photo Taken\n");
+                printf("camThread: Photo Taken\n");
                 ImgLock.unlock();
                 pthread_yield();
             } else {
@@ -48,26 +48,27 @@ void *arrayThread(void *arg) {
     printf("arrayThread: Top\n");
 
     /* Initialise LED Array */
-    if (!INIT_ARRAY(&fd_array)) {
-        ArrayInitialised = 1;
-        env = 0;
+    while (INIT_ARRAY(&fd_array)) ;
+    printf("arrayThread: fd_array initialised\n");
 
-        while(1) {
-            if (Shutdown) {
-                printf("Array, Powering Down\n");
-                break;
-            }
+    ArrayInitialised = 1;   
+    env = 0;
 
-            while(!EnvLock.try_lock()) {
-                pthread_yield();
-            }
-            while (Env != env) {
-                env = Array_Next(fd_array);
-            }
-            EnvSync = 1;
-            EnvLock.unlock();
+    while(1) {
+        if (Shutdown) {
+            printf("arrayThread: Array, Powering Down\n");
+            break;
+        }
+
+        while(!EnvLock.try_lock()) {
             pthread_yield();
         }
+        while (Env != env) {
+            env = Array_Next(fd_array);
+        }
+        EnvSync = 1;
+        EnvLock.unlock();
+        pthread_yield();
     }
 
     pthread_exit(NULL);
