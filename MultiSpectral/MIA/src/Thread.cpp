@@ -71,35 +71,35 @@ void *cameraArrayThread(void *arg) {
         cap >> Img[env];
     }
     env = 0; 
-    printf("CameraArrayThread: Post INIT\n"); 
+    //printf("CameraArrayThread: Post INIT\n"); 
 
     /* Check for shutdown command and stop thread */
     while(!Shutdown) {
-        printf("cameraArrayThread: In loop\n");
+        //printf("cameraArrayThread: In loop\n");
         /* Save Frame to perminant location */
         /* check lock so don't change image while main is displaying */
         if (ImgLock.try_lock()) {
             /* copy current frame to Appropriate env mat */
             if (Array_Reset) {
-                printf("Env: %d\n",Env);
+                //printf("Env: %d\n",Env);
                 tosser.copyTo(Img[Env]);
                 PhotoSync[Env] = 1;
               //  saveEnv[Env].write(tosser);
             } else {
                 tosser.copyTo(Ref_Img);
-                printf("cameraArrayThread: wrote another ref\n");
+                //printf("cameraArrayThread: wrote another ref\n");
             //    saveRef.write(tosser);
             } 
             /* unlock the image for access to other threads */
             ImgLock.unlock();
             /* yield thread here to use before Env changes */
-            printf("yield\n");
+            //printf("yield\n");
             pthread_yield();
-            printf("return\n");
+            //printf("return\n");
 
             /* oscilate between environments and referance frame */
             if (Array_Reset >= Intermix_Frames) {
-                printf("Zeroing\n");
+                //printf("Zeroing\n");
                 while ((dev = Array_Zero(fd_array))) ;
                 
                 while (Array_Refresh(fd_array) != Num_Env) ;
@@ -109,7 +109,7 @@ void *cameraArrayThread(void *arg) {
                     Env++;
                     Env %= Num_Env;
                     
-                    printf("incrementing ENV\n");
+                    //printf("incrementing ENV\n");
                     while ((env = Array_Next(fd_array)) != Env); 
                     while (Array_Refresh(fd_array) != Env) ;
                     EnvLock.unlock();
@@ -122,7 +122,7 @@ void *cameraArrayThread(void *arg) {
         /* empty camera buffer, last image should take longer */
         /* image which will be used as it is the most recent */
         do {
-            printf("Taking pic\n");
+            //printf("Taking pic\n");
             cap >> tosser;
             time = clock();
             cap >> tosser;
@@ -142,4 +142,38 @@ void *cameraArrayThread(void *arg) {
     printf("arrayThread: Array, Powering Down\n");
     pthread_exit(NULL);
 }
+
+
+
+
+void *ImgProcThread(void *arg) {
+    int env;
+    int env_count;
+    while(!Shutdown) {
+        env_count = 0;
+        for (env = 0; env < Num_Env; env++) {
+            env_count += PhotoSync[env];
+        }
+        if (env_count == Num_Env) {
+            while(!ImgLock.try_lock()) ;
+            //do image processing here
+            printf("process\n");
+
+            //save result to out;
+            for (env = 0; env < Num_Env; env++) 
+                PhotoSync[env] = 0;
+            ImgLock.unlock();
+        }
+
+    } 
+
+    printf("ImgProcThread, Powering Down\n");
+    pthread_exit(NULL);
+}
+
+
+
+
+
+
 

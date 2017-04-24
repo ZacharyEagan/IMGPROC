@@ -28,7 +28,7 @@ int main() {
     pthread_t tid[2];
 
 
-    /* initialise threads */
+    /* initialise cameraArray thread */
     if (pthread_create(&(tid[0]), NULL, &cameraArrayThread, NULL)) {
         printf("main: Threading error: cameraArray\n");
         return -1;
@@ -86,6 +86,13 @@ int main() {
         return -1;
     }
 
+    
+    /* initialise ImgProc thread */
+    if (pthread_create(&(tid[1]), NULL, &ImgProcThread, NULL)) {
+        printf("main: Threading error: &ImgProcThread\n");
+        return -1;
+    }
+    printf("main: ImgProcThread split, starting INIT\n");
 
     while (1) {
      //sleep(2); 
@@ -94,13 +101,14 @@ int main() {
         if (Array_Reset != 0) {    
             if (EnvLock.try_lock()) {
                 for (env = 0; env < Num_Env; env++) {
-                    if (PhotoSync[env]) {
+                    /*if (PhotoSync[env]) {
                         window_name[7] = 48 + env;
                         imshow(window_name, Img[env]);
                         saveEnv[env].write(Img[env]);
                         PhotoSync[env] = 0;
 
                     }
+                    */
                 }
                 EnvLock.unlock();
             }
@@ -110,7 +118,7 @@ int main() {
         }    
         ImgLock.unlock();
         
-        if(waitKey(30) == 27) 
+        if(waitKey(20) == 27) 
             break;
     }
 
@@ -121,7 +129,7 @@ int main() {
     saveRef.release();
     Shutdown = 1;
     pthread_join(tid[0], NULL);
-//    pthread_join(tid[1], NULL);
+    pthread_join(tid[1], NULL);
 
     return 0;
 }
