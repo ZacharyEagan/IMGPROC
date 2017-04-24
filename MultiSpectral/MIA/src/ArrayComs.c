@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include "ArrayComs.h"
+#include "Constants.h"
 
 #define BUFF_STD 64
 
@@ -59,7 +60,7 @@ int INIT_Array (int fd) {
    
 
     if ((readln_Port(fd, buff, 64)) > 0)
-        if ((buff[0] == '0'))
+        if ((buff[0] == 48 + Num_Env))
             return 0;
         else
             printf("BUFF %s\n", buff);
@@ -83,7 +84,7 @@ int Array_Zero(int fd) {
     } 
  
     if ((readln_Port(fd, buff, BUFF_STD)) > 0) 
-        if ((buff[0] == '0')) 
+        if ((buff[0] == 48 + Num_Env)) 
             return 0; 
  
     return -3; 
@@ -95,10 +96,29 @@ int Array_Next(int fd) {
     char buff[BUFF_STD];
 
     if (!fd) {
-        printf("Array_Zero: port not found\n");
+        printf("Array_Next: port not found\n");
         return -1;
     }
     write_Port (fd, (char *) "N");
+    if (waitSelect(fd, 1000000) == 0) {
+        printf("Array_Zero: Array took too long\n");
+        return -2;
+    }
+
+    if ((readln_Port(fd, buff, BUFF_STD)) > 0)
+            return ((int)buff[0] - 48);
+
+    return -3;
+}
+
+int Array_Refresh(int fd) {
+    char buff[BUFF_STD];
+
+    if (!fd) {
+        printf("Array_Refres: port not found\n");
+        return -1;
+    }
+    write_Port (fd, (char *) "R");
     if (waitSelect(fd, 1000000) == 0) {
         printf("Array_Zero: Array took too long\n");
         return -2;

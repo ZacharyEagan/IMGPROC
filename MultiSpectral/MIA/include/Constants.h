@@ -2,6 +2,8 @@
 #include <mutex>
 #include <pthread.h>
 
+#define NUM_ENV 7
+
 using namespace std;
 using namespace cv;
 /* Cammera Communications */
@@ -13,22 +15,25 @@ extern const double FrameRate;
 extern const int Buff_Max;
 
 
-/*Global Variables*/
-
-/* Global Camera vars */
-extern int CamInitialised;
-extern Mat Img;
-extern std::mutex ImgLock;
-extern int PhotoSync;
-extern double FrameDelay;
+/*Global Threading Variables*/
 
 /* Global Array vars */
 extern int Num_Env;
 extern int ArrayInitialised;
+extern int Array_Reset;
 extern int Env;
 extern std::mutex EnvLock;
 extern int EnvSync;
 
+/* Global Camera vars */
+extern int CamInitialised;
+extern Mat Img[NUM_ENV];
+extern Mat Ref_Img;
+extern std::mutex ImgLock;
+extern int PhotoSync[NUM_ENV];
+extern double FrameDelay;
+
 /* Global Control var */
 extern int Shutdown;
+extern int Intermix_Frames;
 

@@ -5,6 +5,8 @@
 #include <mutex>
 #include <pthread.h>
 
+#define NUM_ENV 7
+
 /* Cammera Communications */
 const char *DefaultCamera = "/dev/video1";
 int OCV_Camera = 0;
@@ -17,22 +19,24 @@ const int Buff_Max = 64;
 
 /* Global Threading Variables */
 
-/* Global Camera vars */
-int CamInitialised = 0;
-cv::Mat Img;
-std::mutex ImgLock;
-int PhotoSync = 0;
-double FrameDelay = 0.01;
-
 /* Global Array vars */
-int Num_Env = 8;
+int Num_Env = NUM_ENV;
 int ArrayInitialised = 0;
+int Array_Reset = 0;
 int Env;
 std::mutex EnvLock;
 int EnvSync = 0;
 
+/* Global Camera vars */
+int CamInitialised = 0;
+cv::Mat Img[NUM_ENV];
+cv::Mat Ref_Img;
+std::mutex ImgLock;
+int PhotoSync[NUM_ENV];
+double FrameDelay = 0.009; //actual value was 0.01 
+
 /* Global Control var */
 int Shutdown = 0;
-
+int Intermix_Frames = 3;
 
 #endif

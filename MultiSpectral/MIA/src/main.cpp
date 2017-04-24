@@ -20,10 +20,6 @@ using namespace cv;
 
 int main() {
 
-    
-    Mat image[Num_Env];
-    
-
     char window_name[] = "Display0";
     int env;
     int array_resp;
@@ -54,24 +50,44 @@ int main() {
     for (env = 0; env < Num_Env; env++) {
         window_name[7] = 48 + env;
         namedWindow (window_name, 1);
+        PhotoSync[env] = 0;
     }
-    sleep(1);
+    /* window for the default env (motion detect & ambiance) */
+    namedWindow("Ref", 1);
 
+    /* give camera time to populate Img */
+    while (!PhotoSync[Num_Env - 1]) {
+        printf("main: waiting\n");
+        sleep(1);
+    }
     while (1) {
-
-      
-        /* Display image in window corresponding to current environment */
+     //sleep(2); 
+        /* Display image in window corresponding to environment */
         ImgLock.lock();
-        window_name[7] = 48 + Env;
-        imshow(window_name, Img);
+        if (Array_Reset != 0) {    
+            if (EnvLock.try_lock()) {
+                for (env = 0; env < Num_Env; env++) {
+                    if (PhotoSync[env]) {
+                        window_name[7] = 48 + env;
+                        imshow(window_name, Img[env]);
+                        PhotoSync[env] = 0;
+                    }
+                }
+                EnvLock.unlock();
+            }
+        } else {
+            imshow("Ref", Ref_Img);
+        }    
         ImgLock.unlock();
-
+        
         if(waitKey(30) == 27) 
             break;
     }
+
+    /* Signal threads to exit and wait to collect children */
     Shutdown = 1;
     pthread_join(tid[0], NULL);
-    pthread_join(tid[1], NULL);
+//    pthread_join(tid[1], NULL);
 
     return 0;
 }

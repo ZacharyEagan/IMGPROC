@@ -9,6 +9,7 @@ int Find_Array_Coms( void );
 int INIT_Array(int fd);
 int Array_Zero(int fd);
 int Array_Next(int fd);
+int Array_Refresh(int fd);
 int INIT_Port(int fd);
 int open_Port(char *port);
 int write_Port(int fd, char *strn);
