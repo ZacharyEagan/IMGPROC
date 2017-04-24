@@ -7,75 +7,6 @@
 using namespace std;
 using namespace cv;
 
-/*
-void *camThread(void *arg) {
-
-    VideoCapture cap;
-    Mat tosser;
-
-    printf("camThread: Top\n");
-
-    if (!INIT_CAM(&cap)) {
-        printf("camThread: Camera Inittialised\n");
-        CamInitialised = 1;
-
-        while (1) {
-            if (Shutdown) {
-                printf("camThread: Camera Powering Down\n");
-                break;
-            }
-
-            if (ImgLock.try_lock()) {
-                printf("camThread: Taking photo\n");
-                cap >> Img;
-                PhotoSync = 1;
-                printf("camThread: Photo Taken\n");
-                ImgLock.unlock();
-                pthread_yield();
-            } else {
-                cap >> tosser;
-            }
-        }
-   }
-
-   pthread_exit(NULL);
-}
-*/
-/*
-void *arrayThread(void *arg) {
-    int fd_array;
-    int env;
-
-    printf("arrayThread: Top\n");
-
-    // Initialise LED Array 
-    while (INIT_ARRAY(&fd_array)) ;
-    printf("arrayThread: fd_array initialised\n");
-
-    ArrayInitialised = 1;   
-    env = 0;
-
-    while(1) {
-        if (Shutdown) {
-            printf("arrayThread: Array, Powering Down\n");
-            break;
-        }
-
-        while(!EnvLock.try_lock()) {
-            pthread_yield();
-        }
-        while (Env != env) {
-            env = Array_Next(fd_array);
-        }
-        EnvSync = 1;
-        EnvLock.unlock();
-        pthread_yield();
-    }
-
-    pthread_exit(NULL);
-}
-*/
-
 
 void *cameraArrayThread(void *arg) {
     /* Array variables */
@@ -92,6 +23,7 @@ void *cameraArrayThread(void *arg) {
     double elapsed;
     
 
+
     printf("cameraArrayThread: Top\n");
 
     /* Initialise LED Array */
@@ -107,32 +39,66 @@ void *cameraArrayThread(void *arg) {
     CamInitialised = 1;
     printf("cameraArrayThread: Camera Inittialised\n");
    
+    cap >> Ref_Img;
+    
+    /* Save Variables */
+    char save_name[] = "Display0.avi";
+    Size FrSize(Ref_Img.cols, Ref_Img.rows);
+    int FrRate = 15;
+    VideoWriter saveEnv[Num_Env];
+    VideoWriter saveRef;
+
+    for (env = 0; env < Num_Env; env++) { 
+        save_name[7] = env + 48;
+        saveEnv[env].open(save_name, 
+            CV_FOURCC('M','J','P','G'), FrRate, FrSize, true);
+
+        if (!saveEnv[env].isOpened()) {
+            printf("CamArrayThread: failed open saveEnv file: %s\n", save_name);
+            Shutdown = 1;
+        }
+        
+    }
+    saveRef.open("Ref.avi", 
+            CV_FOURCC('M','J','P','G'), FrRate, FrSize, true);
+    if (!saveRef.isOpened()) {
+        printf("CamArrayThread: unable to open save file for reference\n");
+        Shutdown = 1;
+    }
+    
     for (env = 0; env < Num_Env; env++) { 
         cap >> Img[env];
     }
-    cap >> Ref_Img;
     env = 0; 
-    
+    printf("CameraArrayThread: Post INIT\n"); 
+
     /* Check for shutdown command and stop thread */
     while(!Shutdown) {
-        
+        printf("cameraArrayThread: In loop\n");
         /* Save Frame to perminant location */
         /* check lock so don't change image while main is displaying */
         if (ImgLock.try_lock()) {
             /* copy current frame to Appropriate env mat */
             if (Array_Reset) {
+                printf("Env: %d\n",Env);
                 tosser.copyTo(Img[Env]);
                 PhotoSync[Env] = 1;
+                saveEnv[Env].write(tosser);
             } else {
                 tosser.copyTo(Ref_Img);
+                printf("cameraArrayThread: wrote another ref\n");
+                saveRef.write(tosser);
             } 
             /* unlock the image for access to other threads */
             ImgLock.unlock();
             /* yield thread here to use before Env changes */
+            printf("yield\n");
             pthread_yield();
+            printf("return\n");
 
             /* oscilate between environments and referance frame */
             if (Array_Reset >= Intermix_Frames) {
+                printf("Zeroing\n");
                 while ((dev = Array_Zero(fd_array))) ;
                 
                 while (Array_Refresh(fd_array) != Num_Env) ;
@@ -141,7 +107,8 @@ void *cameraArrayThread(void *arg) {
                 if (EnvLock.try_lock()) {
                     Env++;
                     Env %= Num_Env;
-
+                    
+                    printf("incrementing ENV\n");
                     while ((env = Array_Next(fd_array)) != Env); 
                     while (Array_Refresh(fd_array) != Env) ;
                     EnvLock.unlock();
@@ -154,6 +121,7 @@ void *cameraArrayThread(void *arg) {
         /* empty camera buffer, last image should take longer */
         /* image which will be used as it is the most recent */
         do {
+            printf("Taking pic\n");
             cap >> tosser;
             time = clock();
             cap >> tosser;
@@ -164,6 +132,11 @@ void *cameraArrayThread(void *arg) {
     
 
     }
+    
+    for (env = 0; env < Num_Env; env++) {
+        saveEnv[env].release();
+    }
+    saveRef.release();
 
     printf("arrayThread: Array, Powering Down\n");
     pthread_exit(NULL);
