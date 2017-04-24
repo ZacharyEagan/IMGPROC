@@ -45,7 +45,7 @@ int main() {
     }
 
     printf("Initialisation Complete\n");
-        
+            
     /* Initialise windows */
     for (env = 0; env < Num_Env; env++) {
         window_name[7] = 48 + env;
@@ -60,6 +60,33 @@ int main() {
         printf("main: waiting\n");
         sleep(1);
     }
+
+    char save_name[] = "Display000.avi";
+    Size FrSize(Ref_Img.cols, Ref_Img.rows);
+    int FrRate = 15;
+    VideoWriter saveEnv[Num_Env];
+    VideoWriter saveRef;
+
+    for (env = 0; env < Num_Env; env++) {
+        save_name[7] = env + 48;
+        saveEnv[env].open(save_name,
+            CV_FOURCC('M', 'J', 'P', 'G'), FrRate, FrSize, true);
+
+        if(!saveEnv[env].isOpened()) {
+            printf("main: failed open saveEnv file: %s\n", save_name);
+            Shutdown = 1;
+            return -1;
+        }
+    }
+    saveRef.open("Ref.avi", 
+        CV_FOURCC('M', 'J', 'P', 'G'), FrRate, FrSize, true);
+    if (!saveRef.isOpened()) {
+        printf("main: unable to open saveRef\n");
+        Shutdown = 1;
+        return -1;
+    }
+
+
     while (1) {
      //sleep(2); 
         /* Display image in window corresponding to environment */
@@ -70,13 +97,16 @@ int main() {
                     if (PhotoSync[env]) {
                         window_name[7] = 48 + env;
                         imshow(window_name, Img[env]);
+                        saveEnv[env].write(Img[env]);
                         PhotoSync[env] = 0;
+
                     }
                 }
                 EnvLock.unlock();
             }
         } else {
             imshow("Ref", Ref_Img);
+            saveRef.write(Ref_Img);
         }    
         ImgLock.unlock();
         
@@ -85,6 +115,10 @@ int main() {
     }
 
     /* Signal threads to exit and wait to collect children */
+    for (env = 0; env < Num_Env; env++) {
+        saveEnv[env].release();
+    }
+    saveRef.release();
     Shutdown = 1;
     pthread_join(tid[0], NULL);
 //    pthread_join(tid[1], NULL);

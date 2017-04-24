@@ -42,6 +42,7 @@ void *cameraArrayThread(void *arg) {
     cap >> Ref_Img;
     
     /* Save Variables */
+    /*
     char save_name[] = "Display0.avi";
     Size FrSize(Ref_Img.cols, Ref_Img.rows);
     int FrRate = 15;
@@ -65,7 +66,7 @@ void *cameraArrayThread(void *arg) {
         printf("CamArrayThread: unable to open save file for reference\n");
         Shutdown = 1;
     }
-    
+    */
     for (env = 0; env < Num_Env; env++) { 
         cap >> Img[env];
     }
@@ -83,11 +84,11 @@ void *cameraArrayThread(void *arg) {
                 printf("Env: %d\n",Env);
                 tosser.copyTo(Img[Env]);
                 PhotoSync[Env] = 1;
-                saveEnv[Env].write(tosser);
+              //  saveEnv[Env].write(tosser);
             } else {
                 tosser.copyTo(Ref_Img);
                 printf("cameraArrayThread: wrote another ref\n");
-                saveRef.write(tosser);
+            //    saveRef.write(tosser);
             } 
             /* unlock the image for access to other threads */
             ImgLock.unlock();
@@ -133,10 +134,10 @@ void *cameraArrayThread(void *arg) {
 
     }
     
-    for (env = 0; env < Num_Env; env++) {
+    /*for (env = 0; env < Num_Env; env++) {
         saveEnv[env].release();
-    }
-    saveRef.release();
+    }*/
+    //saveRef.release();
 
     printf("arrayThread: Array, Powering Down\n");
     pthread_exit(NULL);
