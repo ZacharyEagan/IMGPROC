@@ -97,7 +97,7 @@ int main() {
     while (1) {
      //sleep(2); 
         /* Display image in window corresponding to environment */
-        ImgLock.lock();
+        ImgLock[0].lock();
         if (Array_Reset != 0) {    
             if (EnvLock.try_lock()) {
                 for (env = 0; env < Num_Env; env++) {
@@ -116,7 +116,7 @@ int main() {
             imshow("Ref", Ref_Img);
             saveRef.write(Ref_Img);
         }    
-        ImgLock.unlock();
+        ImgLock[0].unlock();
         
         if(waitKey(20) == 27) 
             break;

@@ -78,7 +78,7 @@ void *cameraArrayThread(void *arg) {
         //printf("cameraArrayThread: In loop\n");
         /* Save Frame to perminant location */
         /* check lock so don't change image while main is displaying */
-        if (ImgLock.try_lock()) {
+        if (ImgLock[0].try_lock()) {
             /* copy current frame to Appropriate env mat */
             if (Array_Reset) {
                 //printf("Env: %d\n",Env);
@@ -91,7 +91,7 @@ void *cameraArrayThread(void *arg) {
             //    saveRef.write(tosser);
             } 
             /* unlock the image for access to other threads */
-            ImgLock.unlock();
+            ImgLock[0].unlock();
             /* yield thread here to use before Env changes */
             //printf("yield\n");
             pthread_yield();
@@ -143,7 +143,69 @@ void *cameraArrayThread(void *arg) {
     pthread_exit(NULL);
 }
 
+//Thread to continuously save the images to file
+//Must not be called until after Ref_Img is filled
+void *ImgSaveThread(void *arg) {
+    int env;
 
+    char *save_name;// "Display000.avi";
+
+    Size FrSize(Ref_Img.cols, Ref_Img.rows);
+    int FrRate = 15;
+    VideoWriter saveEnv[Num_Env];
+    VideoWriter saveRef;
+
+    for (env = 0; env < Num_Env; env++) {
+        sprintf(save_name, "Display%d.avi", env);
+        saveEnv[env].open(save_name,
+            CV_FOURCC('M', 'J', 'P', 'G'), FrRate, FrSize, true);
+
+        if(!saveEnv[env].isOpened()) {
+            printf("main: failed open saveEnv file: %s\n", save_name);
+            Shutdown = 1;
+        }
+    }
+    saveRef.open("Ref.avi",
+        CV_FOURCC('M', 'J', 'P', 'G'), FrRate, FrSize, true);
+    if (!saveRef.isOpened()) {
+        printf("main: unable to open saveRef\n");
+        Shutdown = 1;
+    }
+
+	while (!Shutdown) {
+
+		for (env = 0; env < Num_Env; env++) {
+        	sprintf(save_name, "Display%d.avi", env);
+
+			while (PhotoSync[env]) {
+				if (ImgLock[env].try_lock()) {
+				    saveEnv[env].write(Img[env]);
+
+					PhotoSync[env]--;
+					ImgLock[env].unlock();
+				} else {
+					pthread_yield();
+				}
+
+			}
+	    }
+		while (PhotoRefSync) {
+			if (ImgRefLock.try_lock()) {
+				saveRef.write(Ref_Img);
+				PhotoRefSync--;
+				ImgRefLock.unlock();
+			} else {
+				pthread_yield();
+			}
+		}
+	} ///need to remember to unlock everything when shutdown is 
+	  //called otherwise could lock threads
+	for (env = 0; env < Num_Env; env++) {
+		saveEnv[env].release();
+	}
+	saveRef.release();
+	pthread_exit(NULL);
+}
 
 
 void *ImgProcThread(void *arg) {
@@ -155,14 +217,14 @@ void *ImgProcThread(void *arg) {
             env_count += PhotoSync[env];
         }
         if (env_count == Num_Env) {
-            while(!ImgLock.try_lock()) ;
+            while(!ImgLock[0].try_lock()) ;
             //do image processing here
             printf("process\n");
 
             //save result to out;
             for (env = 0; env < Num_Env; env++) 
                 PhotoSync[env] = 0;
-            ImgLock.unlock();
+            ImgLock[0].unlock();
         }
 
     } 

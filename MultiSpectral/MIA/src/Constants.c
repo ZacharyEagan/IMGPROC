@@ -31,8 +31,10 @@ int EnvSync = 0;
 int CamInitialised = 0;
 cv::Mat Img[NUM_ENV];
 cv::Mat Ref_Img;
-std::mutex ImgLock;
+std::mutex ImgLock[NUM_ENV];
+std::mutex ImgRefLock;
 int PhotoSync[NUM_ENV];
+int PhotoRefSync;
 double FrameDelay = 0.009; //actual value was 0.01 
 
 /* Global Control var */

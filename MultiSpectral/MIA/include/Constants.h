@@ -29,8 +29,10 @@ extern int EnvSync;
 extern int CamInitialised;
 extern Mat Img[NUM_ENV];
 extern Mat Ref_Img;
-extern std::mutex ImgLock;
+extern std::mutex ImgLock[NUM_ENV];
+extern std::mutex ImgRefLock;
 extern int PhotoSync[NUM_ENV];
+extern int PhotoRefSync;
 extern double FrameDelay;
 
 /* Global Control var */
