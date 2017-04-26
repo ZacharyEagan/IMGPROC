@@ -60,7 +60,7 @@ int main() {
         printf("main: waiting\n");
         sleep(1);
     }
-
+    /*
     char save_name[] = "Display000.avi";
     Size FrSize(Ref_Img.cols, Ref_Img.rows);
     int FrRate = 15;
@@ -85,7 +85,7 @@ int main() {
         Shutdown = 1;
         return -1;
     }
-
+    */
     
     /* initialise ImgProc thread */
     if (pthread_create(&(tid[1]), NULL, &ImgProcThread, NULL)) {
@@ -114,7 +114,7 @@ int main() {
             }
         } else {
             imshow("Ref", Ref_Img);
-            saveRef.write(Ref_Img);
+        //    saveRef.write(Ref_Img);
         }    
         ImgLock[0].unlock();
         
@@ -123,10 +123,10 @@ int main() {
     }
 
     /* Signal threads to exit and wait to collect children */
-    for (env = 0; env < Num_Env; env++) {
+   /* for (env = 0; env < Num_Env; env++) {
         saveEnv[env].release();
-    }
-    saveRef.release();
+    }*/
+    //saveRef.release();
     Shutdown = 1;
     pthread_join(tid[0], NULL);
     pthread_join(tid[1], NULL);
