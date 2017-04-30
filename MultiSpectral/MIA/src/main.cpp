@@ -25,7 +25,7 @@ int main() {
     int array_resp;
     int dupe;
 
-    pthread_t tid[2];
+    pthread_t tid[3];
 
 
     /* initialise cameraArray thread */
