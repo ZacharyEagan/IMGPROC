@@ -158,8 +158,10 @@
 <wire x1="0" y1="100" x2="0" y2="0" width="0" layer="48"/>
 <dimension x1="0" y1="0" x2="100" y2="0.25" x3="50.032434375" y3="-12.84929375" textsize="1.778" layer="1"/>
 <dimension x1="0" y1="0" x2="0" y2="100" x3="-10.75" y3="50" textsize="1.778" layer="1" dtype="diameter"/>
-<wire x1="0.5" y1="47.25" x2="47.75" y2="0.5" width="1.016" layer="46" curve="-89.847631"/>
-<wire x1="0.5" y1="99.5" x2="99.5" y2="0.5" width="1.016" layer="46" curve="-89.641185"/>
+<wire x1="0.5" y1="47.25" x2="47.75" y2="0.5" width="1.016" layer="20" curve="-89.847631"/>
+<wire x1="0.5" y1="99.5" x2="99.5" y2="0.5" width="1.016" layer="20" curve="-89.641185"/>
+<wire x1="47.75" y1="0.5" x2="99.5" y2="0.5" width="1.016" layer="20"/>
+<wire x1="0.5" y1="99.5" x2="0.5" y2="47.25" width="1.016" layer="20"/>
 </plain>
 <libraries>
 <library name="wirepad">

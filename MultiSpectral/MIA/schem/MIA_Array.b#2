@@ -53,7 +53,7 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
@@ -156,10 +156,10 @@
 <wire x1="160" y1="0" x2="160" y2="100" width="0" layer="20"/>
 <wire x1="160" y1="100" x2="0" y2="100" width="0" layer="20"/>
 <wire x1="0" y1="100" x2="0" y2="0" width="0" layer="20"/>
-<circle x="0" y="0" radius="47.5" width="0.4064" layer="49"/>
-<circle x="0" y="0" radius="100" width="0.4064" layer="49"/>
 <dimension x1="0" y1="0" x2="100" y2="0.25" x3="50.032434375" y3="-12.84929375" textsize="1.778" layer="1"/>
 <dimension x1="0" y1="0" x2="0" y2="100" x3="-10.75" y3="50" textsize="1.778" layer="1" dtype="diameter"/>
+<wire x1="0.25" y1="47.25" x2="47.75" y2="0.25" width="1.016" layer="46" curve="-89.847631"/>
+<wire x1="0" y1="100" x2="99.5" y2="0.5" width="1.016" layer="46" curve="-89.641185"/>
 </plain>
 <libraries>
 <library name="wirepad">
