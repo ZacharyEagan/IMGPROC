@@ -1543,8 +1543,8 @@ design rules under a new name.</description>
 <element name="PAD16" library="wirepad" package="2,54/1,1" value="" x="3" y="64"/>
 <element name="PAD17" library="wirepad" package="2,54/1,1" value="" x="3" y="58"/>
 <element name="PAD18" library="wirepad" package="2,54/1,1" value="" x="3" y="52"/>
-<element name="PAD19" library="wirepad" package="2,54/1,1" value="" x="9.25" y="49.25"/>
-<element name="PAD20" library="wirepad" package="2,54/1,1" value="" x="37.5" y="33"/>
+<element name="PAD19" library="wirepad" package="2,54/1,1" value="" x="9.25" y="48.25" rot="R345"/>
+<element name="PAD20" library="wirepad" package="2,54/1,1" value="" x="37.25" y="32.75"/>
 </elements>
 <signals>
 <signal name="N$1">
@@ -1808,7 +1808,7 @@ design rules under a new name.</description>
 <wire x1="51.625" y1="47.125" x2="47.625" y2="43.125" width="2.54" layer="1"/>
 <wire x1="51.625" y1="47.125" x2="56.25" y2="51.75" width="2.54" layer="1"/>
 <wire x1="39.125" y1="34.625" x2="47.625" y2="43.125" width="2.54" layer="1"/>
-<wire x1="39.125" y1="34.625" x2="37.5" y2="33" width="2.54" layer="1"/>
+<wire x1="39.125" y1="34.625" x2="37.25" y2="32.75" width="2.54" layer="1"/>
 <wire x1="60.625" y1="56.125" x2="64.875" y2="60.375" width="2.54" layer="1"/>
 <wire x1="60.625" y1="56.125" x2="56.25" y2="51.75" width="2.54" layer="1"/>
 <wire x1="68.5" y1="64" x2="64.875" y2="60.375" width="2.54" layer="1"/>
@@ -1870,7 +1870,7 @@ design rules under a new name.</description>
 <wire x1="9.414021875" y1="80.25045625" x2="9.4061" y2="78.75314375" width="2.54" layer="1"/>
 <wire x1="9.484128125" y1="93.500084375" x2="9.47620625" y2="92.002771875" width="2.54" layer="1"/>
 <wire x1="9.484128125" y1="93.500084375" x2="9.5" y2="96.5" width="2.54" layer="1"/>
-<wire x1="9.2725" y1="53.502525" x2="9.25" y2="49.25" width="2.54" layer="1"/>
+<wire x1="9.2725" y1="53.502525" x2="9.25" y2="48.25" width="2.54" layer="1"/>
 <wire x1="16.59" y1="51" x2="9.2725" y2="53.502525" width="1.016" layer="1"/>
 <wire x1="16.84" y1="65.75" x2="9.338634375" y2="66.002175" width="1.016" layer="1"/>
 <wire x1="24.09" y1="58.25" x2="9.306890625" y2="60.00234375" width="1.016" layer="1"/>
