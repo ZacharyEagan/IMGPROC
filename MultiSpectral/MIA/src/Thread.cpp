@@ -55,7 +55,7 @@ void *cameraArrayThread(void *arg) {
             CV_FOURCC('M','J','P','G'), FrRate, FrSize, true);
 
         if (!saveEnv[env].isOpened()) {
-            printf("CamArrayThread: failed open saveEnv file: %s\n", save_name);
+            printf("CamArrayThread: failed open saveEnv file: %s/\n", save_name);
             Shutdown = 1;
         }
         
@@ -110,7 +110,7 @@ void *cameraArrayThread(void *arg) {
                     Env %= Num_Env;
                     
                     //printf("incrementing ENV\n");
-                    while ((env = Array_Next(fd_array)) != Env); 
+                    while ((env = Array_Next(fd_array)) != Env);
                     while (Array_Refresh(fd_array) != Env) ;
                     EnvLock.unlock();
                 }

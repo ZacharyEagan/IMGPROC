@@ -2,7 +2,7 @@
 #include <mutex>
 #include <pthread.h>
 
-#define NUM_ENV 7
+#define NUM_ENV 16
 
 using namespace std;
 using namespace cv;

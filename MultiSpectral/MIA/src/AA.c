@@ -35,8 +35,8 @@ int Find_Array_Coms( void ) {
 int INIT_ARRAY(int *fd_array) {
     if ((*fd_array = Find_Array_Coms()) <= 0)
         return -1;
-    //if (INIT_Port(*fd_array))
-    //    return -2;
+    if (INIT_Port(*fd_array))
+        return -2;
     if (INIT_Array(*fd_array))
         return -3;
     return 0;
@@ -60,7 +60,7 @@ int INIT_Array (int fd) {
    
 
     if ((readln_Port(fd, buff, 64)) > 0)
-        if ((buff[0] == Num_Env))
+        if ((buff[0] == 48 + Num_Env))
             return 0;
         else
             printf("BUFF %s\n", buff);
@@ -84,7 +84,7 @@ int Array_Zero(int fd) {
     } 
  
     if ((readln_Port(fd, buff, BUFF_STD)) > 0) 
-        if ((buff[0] == Num_Env)) 
+        if ((buff[0] == 48 + Num_Env)) 
             return 0; 
  
     return -3; 
@@ -105,9 +105,8 @@ int Array_Next(int fd) {
         return -2;
     }
 
-    if ((readln_Port(fd, buff, BUFF_STD)) > 0) {
-            return ((int)buff[0]);
-    }
+    if ((readln_Port(fd, buff, BUFF_STD)) > 0)
+            return ((int)buff[0] - 48);
 
     return -3;
 }
@@ -126,7 +125,7 @@ int Array_Refresh(int fd) {
     }
 
     if ((readln_Port(fd, buff, BUFF_STD)) > 0)
-            return ((int)buff[0]);
+            return ((int)buff[0] - 48);
 
     return -3;
 }
@@ -148,7 +147,7 @@ int open_Port(char *port) {
         close (fd);
         fd = 0;;
     }
-    printf("openPort: Bottom\n");
+
     return fd;
 }
 
@@ -253,9 +252,10 @@ int readln_Port(int fd, char *buff, size_t size) {
         n = read (fd, buff + count, 1);
         if (n > 0) 
             count++;
-    }while (buff[count - 1] != 'e' && count < size - 1 && n != -1);
+    }while (buff[count - 1] != '\n' && count < size - 1 && n != -1);
    
     buff[count] = '\0';
+
     return count;
 }
 

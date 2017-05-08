@@ -42,6 +42,7 @@ int main() {
             printf("main: waiting on array INIT\n");
 
         pthread_yield();
+        sleep(1);
     }
 
     printf("Initialisation Complete\n");
@@ -133,6 +134,7 @@ int main() {
 
     return 0;
 }
+
 
 
 

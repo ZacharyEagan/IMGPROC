@@ -5,7 +5,7 @@
 #include <mutex>
 #include <pthread.h>
 
-#define NUM_ENV 7
+#define NUM_ENV 16 
 
 /* Cammera Communications */
 const char *DefaultCamera = "/dev/video1";
@@ -39,6 +39,6 @@ double FrameDelay = 0.009; //actual value was 0.01
 
 /* Global Control var */
 int Shutdown = 0;
-int Intermix_Frames = 3;
+int Intermix_Frames = 1;
 
 #endif
