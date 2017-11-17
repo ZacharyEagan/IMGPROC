@@ -1,12 +1,15 @@
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
+#include <stdio.h>
 
 #include <opencv2/opencv.hpp>
 
 
 using namespace std;
 using namespace cv;
+
+
 
 int main(int argc, char **argv) {
 
@@ -18,7 +21,7 @@ int main(int argc, char **argv) {
     int highH = 179;
     int highS = 255;
     int highV = 255;
-    VideoCapture cap(0);
+    VideoCapture cap(1);
     if (!cap.isOpened())
         return -1;
 

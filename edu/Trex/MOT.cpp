@@ -1,10 +1,13 @@
 #include <iostream>
 #include <cstdlib>
 #include <opencv2/opencv.hpp>
+#include <stdio.h>
+
 
 #define FADE 1.2
 #define FRAMES 16 
-#define DVAL 8 
+#define DVAL 8
+using namespace std; 
 using namespace cv;
 
 void HalfLifeFilter(Mat raw, Mat image) {
@@ -35,7 +38,7 @@ int main (int argc, char** argv) {
         
     namedWindow("Display",1);
 
-    VideoCapture cap(0);
+    VideoCapture cap(1);
 
     if (!cap.isOpened()) {
         fprintf(stderr, "Error: Unable to open video stream\n");

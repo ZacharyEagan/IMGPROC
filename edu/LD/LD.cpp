@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
-
+#include <stdio.h>
 #include <opencv2/opencv.hpp>
 
 
